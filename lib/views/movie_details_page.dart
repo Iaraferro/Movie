@@ -38,6 +38,26 @@ class MovieDetailsPage extends StatelessWidget {
                 Text('${movie.voteAverage} / 10', style: const TextStyle(fontSize: 16)),
               ],
             ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text('Adicionar ao Diário', style: TextStyle(fontSize: 16)),
+                onPressed: () {
+                  // Futuramente, isso vai salvar no Supabase
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Em breve: salvar no banco de dados!')),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
             const SizedBox(height: 20),
             const Text('Sinopse:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),

@@ -6,6 +6,7 @@ import 'services/tmdb_service.dart';
 import 'repositories/movie_repository.dart';
 import 'viewmodels/search_viewmodel.dart';
 import 'views/login_page.dart';
+import 'viewmodels/home_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,9 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => SearchViewModel(movieRepository),
+        ),
+         ChangeNotifierProvider(
+          create: (_) => HomeViewModel(movieRepository),
         ),
       ],
       child: const MyApp(),

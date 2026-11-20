@@ -22,4 +22,19 @@ class TmdbService {
       throw Exception('Falha ao buscar filmes. Verifique a conexão.');
     }
   }
+     Future<List<Movie>> getPopularMovies() async {
+    final url = Uri.parse(
+      '$_baseUrl/movie/popular?api_key=$_apiKey&language=pt-BR&page=1',
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List results = data['results'];
+      return results.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao buscar filmes populares.');
+    }
+  }
 }

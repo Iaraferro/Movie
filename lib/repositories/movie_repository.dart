@@ -9,4 +9,7 @@ class MovieRepository {
   Future<List<Movie>> buscarFilmes(String query) async {
     return await _service.searchMovies(query);
   }
+    Future<List<Movie>> buscarPopulares() async {
+    return await _service.getPopularMovies();
+  }
 }
