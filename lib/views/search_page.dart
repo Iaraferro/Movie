@@ -15,6 +15,12 @@ class _SearchPageState extends State<SearchPage> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final vm = context.watch<SearchViewModel>();
 
@@ -78,17 +84,29 @@ class _SearchPageState extends State<SearchPage> {
           itemCount: vm.filmes.length,
           itemBuilder: (context, index) {
             final filme = vm.filmes[index];
-            return Card(
+                      return Card(
               margin: const EdgeInsets.only(bottom: 12),
               clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
+                contentPadding: const EdgeInsets.all(8),
                 leading: SizedBox(
-                  width: 50,
-                  height: 75,
-                  child: Image.network(filme.posterUrl, fit: BoxFit.cover),
+                  width: 60,
+                  height: 90,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(filme.posterUrl, fit: BoxFit.cover),
+                  ),
                 ),
-                title: Text(filme.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Nota: ${filme.voteAverage.toStringAsFixed(1)}'),
+                title: Text(filme.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                subtitle: Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                    const SizedBox(width: 4),
+                    Text(filme.voteAverage.toStringAsFixed(1), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.push(
                     context,
