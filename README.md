@@ -1,17 +1,48 @@
-# cinemovie
+# CineMovie
 
-A new Flutter project.
+Projeto desenvolvido para a disciplina de Programação para Dispositivos Móveis I.
 
-## Getting Started
+O aplicativo consiste em um diário de filmes e séries. O usuário pode buscar títulos utilizando a API do The Movie Database (TMDB) e, nas próximas etapas do projeto, poderá salvar suas avaliações, notas e comentários.
 
-This project is a starting point for a Flutter application.
+## Integrantes
 
-A few resources to get you started if this is your first Flutter project:
+- Di Matheus
+- Kaylane
+- Higor Valuar
+- Iara Martins
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Tecnologias e Arquitetura
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Flutter**: Interface e desenvolvimento mobile/web.
+- **Provider**: Gerenciamento de estado.
+- **MVVM**: O código está estruturado em `models`, `services`, `repositories`, `viewmodels` e `views`.
+- **TMDB API**: Consumo de API REST para a busca de filmes em português.
+
+## Como executar o projeto
+
+1. Clone este repositório:
+   ```bash
+   git clone https://github.com/Iaraferro/Movie.git
+
+
+2. Crie um arquivo .env na raiz do projeto (no mesmo nível do pubspec.yaml) e adicione a sua chave de API do TMDB. Para obter uma chave, crie uma conta no site do TMDB:
+
+env
+TMDB_API_KEY=sua_chave_aqui
+
+3.Instale as dependências:
+
+bash
+flutter pub get
+
+4.Execute o aplicativo no navegador ou em um dispositivo móvel:
+
+bash
+flutter run -d chrome
+
+Status do Projeto
+☑ Estrutura base e MVVM
+☑ Consumo da API do TMDB
+☑ Telas de navegação e busca
+□ Autenticação com Google (Supabase)
+□ CRUD do diário de filmes (Supabase)
