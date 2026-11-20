@@ -8,33 +8,43 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Padding(
+        // SingleChildScrollView evita overflow em tela pequena ou deitada
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.movie_filter, size: 100, color: Colors.deepPurple),
-              const SizedBox(height: 20),
-              const Text(
-                'CineMovie',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.movie_filter,
+                  size: 100,
+                  color: Colors.deepPurple,
                 ),
-                onPressed: () {
-                  // Navega para a Home provisoriamente
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-                  );
-                },
-                icon: const Icon(Icons.login),
-                label: const Text('Entrar (Provisório)'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                const Text(
+                  'CineMovie',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text('Seu diário de filmes'),
+                const SizedBox(height: 40),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  onPressed: () {
+                    // Provisório: será trocado pelo login com Google (Supabase)
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                    );
+                  },
+                  icon: const Icon(Icons.login),
+                  label: const Text('Entrar (Provisório)'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
