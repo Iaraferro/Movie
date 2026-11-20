@@ -93,7 +93,10 @@ class _HomePageState extends State<HomePage> {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.network(filme.posterUrl, fit: BoxFit.cover),
+                          Hero(
+                           tag: filme.id.toString(), // O ID garante que ele voe para o filme certo
+                           child: Image.network(filme.posterUrl, fit: BoxFit.cover),
+                          ),
                           Positioned(
                             bottom: 0,
                             left: 0,

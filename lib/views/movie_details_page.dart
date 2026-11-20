@@ -18,12 +18,12 @@ class MovieDetailsPage extends StatelessWidget {
             Stack(
               children: [
                 // Imagem de fundo
-                Image.network(
-                  movie.posterUrl,
-                  height: 350,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+               Hero(
+                tag: movie.id.toString(),
+                 child: Image.network(movie.posterUrl, 
+                 height: 350, width: double.infinity, 
+                 fit: BoxFit.cover),
+                 ),
                 // Filtro escuro e degradê
                 Positioned.fill(
                   child: Container(
