@@ -1,37 +1,31 @@
 import 'package:flutter/foundation.dart';
 import '../models/movie.dart';
 import '../repositories/movie_repository.dart';
-
-enum SearchStatus { inicial, carregando, sucesso, vazio, erro }
+import 'view_status.dart';
 
 class SearchViewModel extends ChangeNotifier {
   final MovieRepository _repository;
 
   SearchViewModel(this._repository);
 
-  SearchStatus status = SearchStatus.inicial;
+  ViewStatus status = ViewStatus.inicial;
   List<Movie> filmes = [];
   String mensagemErro = '';
 
   Future<void> buscar(String texto) async {
     if (texto.trim().isEmpty) return;
 
-    status = SearchStatus.carregando;
-    notifyListeners(); 
+    status = ViewStatus.carregando;
+    notifyListeners();
 
     try {
-      filmes = await _repository.buscarFilmes(texto);
-      
-      if (filmes.isEmpty) {
-        status = SearchStatus.vazio;
-      } else {
-        status = SearchStatus.sucesso;
-      }
+      filmes = await _repository.buscarFilmes(texto.trim());
+      status = filmes.isEmpty ? ViewStatus.vazio : ViewStatus.sucesso;
     } catch (e) {
-      status = SearchStatus.erro;
+      status = ViewStatus.erro;
       mensagemErro = e.toString();
     }
-    
-    notifyListeners(); 
+
+    notifyListeners();
   }
 }

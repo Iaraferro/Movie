@@ -1,5 +1,7 @@
+import 'package:cinemovie/views/poster_image.dart';
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
+
 
 class MovieDetailsPage extends StatelessWidget {
   final Movie movie;
@@ -9,22 +11,24 @@ class MovieDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(movie.title)),
-            body: SingleChildScrollView(
+      // Sem AppBar: o botão de voltar flutuante já cumpre esse papel
+      // (antes a tela tinha dois botões de voltar e o título repetido).
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Topo com a imagem do filme de fundo
             Stack(
               children: [
-                // Imagem de fundo
-               Hero(
-                tag: movie.id.toString(),
-                 child: Image.network(movie.posterUrl, 
-                 height: 350, width: double.infinity, 
-                 fit: BoxFit.cover),
-                 ),
-                // Filtro escuro e degradê
+                Hero(
+                  tag: movie.id.toString(),
+                  child: PosterImage(
+                    url: movie.posterUrl,
+                    height: 350,
+                    width: double.infinity,
+                  ),
+                ),
+                // Degradê que funde a imagem com o fundo da tela
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
@@ -55,7 +59,7 @@ class MovieDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Informações do filme
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -64,23 +68,55 @@ class MovieDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     movie.title,
-                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  // Wrap quebra a linha sozinho se faltar espaço (sem overflow)
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      const Icon(Icons.star, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      Text('${movie.voteAverage} / 10', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${movie.voteAverage.toStringAsFixed(1)} / 10',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.calendar_today, size: 18),
+                          const SizedBox(width: 6),
+                          Text(movie.year, style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  const Text('Sinopse', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Sinopse',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 8),
-                  Text(movie.overview, style: const TextStyle(fontSize: 16, height: 1.5)),
+                  Text(
+                    movie.overview,
+                    style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
                   const SizedBox(height: 30),
-                  
-                  // Botão de Salvar (Para a próxima etapa)
+
+                  // Botão de Salvar (próxima etapa: Supabase)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -90,10 +126,15 @@ class MovieDetailsPage extends StatelessWidget {
                         foregroundColor: Colors.white,
                       ),
                       icon: const Icon(Icons.add),
-                      label: const Text('Adicionar ao Diário', style: TextStyle(fontSize: 16)),
+                      label: const Text(
+                        'Adicionar ao Diário',
+                        style: TextStyle(fontSize: 16),
+                      ),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Em breve: salvar no banco de dados!')),
+                          const SnackBar(
+                            content: Text('Em breve: salvar no banco de dados!'),
+                          ),
                         );
                       },
                     ),

@@ -1,7 +1,11 @@
+import 'package:cinemovie/views/erro_view.dart';
+import 'package:cinemovie/views/poster_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/search_viewmodel.dart';
+import '../viewmodels/view_status.dart';
 import 'movie_details_page.dart';
+
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -20,6 +24,13 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  /// Valida o formulário e, se estiver ok, pede a busca ao ViewModel.
+  void _buscar(SearchViewModel vm) {
+    if (_formKey.currentState!.validate()) {
+      vm.buscar(_controller.text);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<SearchViewModel>();
@@ -34,35 +45,29 @@ class _SearchPageState extends State<SearchPage> {
               key: _formKey,
               child: TextFormField(
                 controller: _controller,
+                textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   labelText: 'Nome do filme',
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        vm.buscar(_controller.text);
-                      }
-                    },
+                    onPressed: () => _buscar(vm),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Digite o nome de um filme para buscar';
                   }
+                  if (value.trim().length < 2) {
+                    return 'Digite pelo menos 2 letras';
+                  }
                   return null;
                 },
-                onFieldSubmitted: (_) {
-                  if (_formKey.currentState!.validate()) {
-                    vm.buscar(_controller.text);
-                  }
-                },
+                onFieldSubmitted: (_) => _buscar(vm),
               ),
             ),
           ),
-          Expanded(
-            child: _buildResultado(vm),
-          ),
+          Expanded(child: _buildResultado(vm)),
         ],
       ),
     );
@@ -70,24 +75,29 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildResultado(SearchViewModel vm) {
     switch (vm.status) {
-      case SearchStatus.inicial:
+      case ViewStatus.inicial:
         return const Center(child: Text('Pesquise por um filme para começar.'));
-      case SearchStatus.carregando:
+      case ViewStatus.carregando:
         return const Center(child: CircularProgressIndicator());
-      case SearchStatus.vazio:
+      case ViewStatus.vazio:
         return const Center(child: Text('Nenhum filme encontrado.'));
-      case SearchStatus.erro:
-        return Center(child: Text(vm.mensagemErro, style: const TextStyle(color: Colors.red)));
-      case SearchStatus.sucesso:
+      case ViewStatus.erro:
+        return ErroView(
+          mensagem: vm.mensagemErro,
+          onTentarNovamente: () => vm.buscar(_controller.text),
+        );
+      case ViewStatus.sucesso:
         return ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: vm.filmes.length,
           itemBuilder: (context, index) {
             final filme = vm.filmes[index];
-                      return Card(
+            return Card(
               margin: const EdgeInsets.only(bottom: 12),
               clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
                 contentPadding: const EdgeInsets.all(8),
                 leading: SizedBox(
@@ -95,15 +105,26 @@ class _SearchPageState extends State<SearchPage> {
                   height: 90,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(filme.posterUrl, fit: BoxFit.cover),
+                    child: PosterImage(url: filme.posterUrl),
                   ),
                 ),
-                title: Text(filme.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                title: Text(
+                  filme.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 subtitle: Row(
                   children: [
                     const Icon(Icons.star, color: Colors.amber, size: 16),
                     const SizedBox(width: 4),
-                    Text(filme.voteAverage.toStringAsFixed(1), style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      filme.voteAverage.toStringAsFixed(1),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(filme.year),
                   ],
                 ),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
