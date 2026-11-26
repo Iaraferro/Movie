@@ -7,11 +7,13 @@ import 'services/tmdb_service.dart';
 import 'repositories/movie_repository.dart';
 import 'viewmodels/search_viewmodel.dart';
 import 'views/login_page.dart';
+import 'services/auth_service.dart';
+import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/home_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Carrega as variáveis de ambiente
   await dotenv.load(fileName: '.env');
 
@@ -21,6 +23,9 @@ Future<void> main() async {
     publishableKey: dotenv.get('SUPABASE_PUBLISHABLE_KEY'),
   );
 
+  // Inicializa o serviço de autenticação
+  final authService = AuthService();
+
   // Inicializa as dependências na ordem correta (Service -> Repository -> ViewModel)
   final tmdbService = TmdbService();
   final movieRepository = MovieRepository(tmdbService);
@@ -28,11 +33,11 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SearchViewModel(movieRepository)),
+        ChangeNotifierProvider(create: (_) => HomeViewModel(movieRepository)),
         ChangeNotifierProvider(
-          create: (_) => SearchViewModel(movieRepository),
-        ),
-         ChangeNotifierProvider(
-          create: (_) => HomeViewModel(movieRepository),
+          create: (_) => AuthViewModel(authService),
+          lazy: false,
         ),
       ],
       child: const MyApp(),
@@ -51,7 +56,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF5142A1),
-          brightness: Brightness.dark, 
+          brightness: Brightness.dark,
         ),
         useMaterial3: true,
       ),
