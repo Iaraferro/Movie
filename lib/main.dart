@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'services/tmdb_service.dart';
 import 'repositories/movie_repository.dart';
@@ -11,8 +12,14 @@ import 'viewmodels/home_viewmodel.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Carrega a chave da API do arquivo .env
-  await dotenv.load(fileName: ".env");
+  // Carrega as variáveis de ambiente
+  await dotenv.load(fileName: '.env');
+
+  // Inicializa o Supabase
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_URL'),
+    publishableKey: dotenv.get('SUPABASE_PUBLISHABLE_KEY'),
+  );
 
   // Inicializa as dependências na ordem correta (Service -> Repository -> ViewModel)
   final tmdbService = TmdbService();
